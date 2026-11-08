@@ -4,12 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Palabras en círculo</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6c4ad8">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Palabras">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{--b1:#ffd9a8;--b2:#f7a8b8;--b3:#a99bf0;--fg:#3b2a55;--tile:#fffaf0;--tfg:#3b2a55;--hid:rgba(255,255,255,.3);--gold:#ffcf4a;--wheel:rgba(255,255,255,.45);--pill:rgba(255,255,255,.55);
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--b1:#1b1f4b;--b2:#2c1f55;--b3:#0f3b4f;--fg:#fff;--hid:rgba(255,255,255,.1);--wheel:rgba(255,255,255,.12);--pill:rgba(255,255,255,.14);color-scheme:dark}}
 :root[data-theme="dark"]{--b1:#1b1f4b;--b2:#2c1f55;--b3:#0f3b4f;--fg:#fff;--hid:rgba(255,255,255,.1);--wheel:rgba(255,255,255,.12);--pill:rgba(255,255,255,.14);color-scheme:dark}
+[hidden]{display:none!important}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{height:100%}
 body{margin:0;height:100%;background:linear-gradient(160deg,var(--b1),var(--b2) 55%,var(--b3));color:var(--fg);font-family:"Fredoka",ui-rounded,system-ui,sans-serif;display:flex;flex-direction:column;user-select:none;-webkit-user-select:none;overflow:hidden}
@@ -43,7 +51,7 @@ button{font:inherit;color:inherit;border:0;background:var(--pill);border-radius:
 </style>
 </head>
 <body>
-<div id="top"><button id="lang"><b>ES</b> · <b>EN</b></button><span id="lv"></span><button id="hint">💡<i></i></button></div>
+<div id="top"><div><button id="lang"><b>ES</b> · <b>EN</b></button> <button id="inst" hidden>⬇</button></div><span id="lv"></span><button id="hint">💡<i></i></button></div>
 <div id="bw"><div id="board"></div></div>
 <div id="msg"></div>
 <div id="cur"></div>
@@ -222,6 +230,12 @@ $("hint").onclick=()=>{
 $("lang").onclick=()=>{S.lang=S.lang=="es"?"en":"es";save();document.documentElement.lang=S.lang;newLevel()};
 $("nx").onclick=()=>{S.lv[S.lang]++;save();$("ov").style.display="none";newLevel()};
 addEventListener("resize",fit);
+// Instalacion como app
+let dp=null;
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;$("inst").hidden=false});
+$("inst").onclick=()=>{if(dp){dp.prompt();dp=null;$("inst").hidden=true}};
+addEventListener("appinstalled",()=>{$("inst").hidden=true});
+try{if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("service-worker.js").catch(()=>{})}catch(e){}
 document.documentElement.lang=S.lang;
 newLevel();
 </script>
